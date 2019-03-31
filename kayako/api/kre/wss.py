@@ -4,9 +4,9 @@ import threading
 import json
 import logging
 import time
-from kayako.kre.errors import KayakoKreError
+from kayako.api.kre.errors import KayakoKreError
 
-from kayako.kre.helpers import (KrePingPayload,
+from kayako.api.kre.helpers import (KrePingPayload,
                                 KreSubscriptionPayload,
                                 get_new_ref,
                                 make_wss_url,

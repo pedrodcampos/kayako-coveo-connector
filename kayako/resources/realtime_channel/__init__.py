@@ -1,0 +1,1 @@
+from kayako.resources.realtime_channel.kre_channel import KayakoKreChannel

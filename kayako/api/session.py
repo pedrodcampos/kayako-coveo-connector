@@ -1,8 +1,8 @@
 import requests
 import json
 import logging
-from kayako.core.errors import KayakoAPIError, KayakoError
-from kayako.core.parsers.user_session import KayakoUserSession
+from kayako.api.errors import KayakoAPIError, KayakoError
+from kayako.api.objects.user_session import KayakoUserSession
 from requests.exceptions import ConnectionError, ReadTimeout, RequestException
 
 

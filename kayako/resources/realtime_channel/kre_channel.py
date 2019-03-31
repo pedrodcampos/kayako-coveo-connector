@@ -1,9 +1,9 @@
-from kayako.kre.wss import KayakoKre
-from kayako.resources.users import KayakoUsers
-from kayako.core.requests import KayakoRequests
-from kayako.core.errors import KayakoAPIError
-from kayako.kre.helpers import PRESENCE_DIFF_EVENT, PRESENCE_STATE_EVENT
-from kayako.kre.errors import KayakoKreError
+from kayako.api.kre.wss import KayakoKre
+from kayako.resources.core.users import KayakoUsers
+from kayako.api.requests import KayakoRequests
+from kayako.api.errors import KayakoAPIError
+from kayako.api.kre.helpers import PRESENCE_DIFF_EVENT, PRESENCE_STATE_EVENT
+from kayako.api.kre.errors import KayakoKreError
 from threading import Event, Thread
 from collections import OrderedDict
 

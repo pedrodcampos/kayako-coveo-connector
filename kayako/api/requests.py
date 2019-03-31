@@ -1,9 +1,14 @@
 import requests
 import json
 import logging
-from kayako.core.errors import KayakoAPIError, KayakoError
-from kayako.core.session import KayakoSession
+from kayako.api.errors import KayakoAPIError, KayakoError
+from kayako.api.session import KayakoSession
 from requests.exceptions import ConnectionError, ReadTimeout, RequestException
+
+
+def extract_params(args, ignore_keys=[]):
+    ignore_keys.append('self')
+    return {key: value for key, value in args.items() if key not in ignore_keys and '__' not in key}
 
 
 def request_error_wrapper(f):
@@ -31,41 +36,43 @@ class KayakoRequests(KayakoSession):
     def __init__(self, api_url, auth):
         super().__init__(api_url, auth)
 
-    def __inject_limit_param(self, params):
-        if params == {}:
-            params.update({'limit':  self.__default_results_limit__})
+    def __inject_limit_param(self, kwargs):
+        if 'params' in kwargs:
+            if 'limit' not in kwargs['params']:
+                kwargs['params'].update(
+                    {'limit':  self.__default_results_limit__})
         else:
-            if 'limit' not in params:
-                params.update({'limit':  self.__default_results_limit__})
-        return params
+            kwargs.update(
+                {'params': {'limit': self.__default_results_limit__}})
+        return kwargs
 
-    def _parse_response(self,  response, method, target, params, ** kwargs):
+    def _parse_response(self,  response, method, target, ** kwargs):
         if type(response["data"]) == dict:
             return response["data"]
 
         data = response["data"]
         if "next_url" in response:
             offset = response['offset']+self.__default_results_limit__
-            params.update({'offset': offset})
+            kwargs.update({'offset': offset})
 
             if method == "GET":
-                response = self.get(target, params, ** kwargs)
+                response = self.get(target, ** kwargs)
             elif method == "POST":
-                response = self.post(target, params, ** kwargs)
+                response = self.post(target, ** kwargs)
             data = data + response
 
         return data
 
     @request_error_wrapper
-    def get(self, target, params={}, ** kwargs):
+    def get(self, target, ** kwargs):
 
-        params = self.__inject_limit_param(params)
-        response = super().session.get(target, params=params, **kwargs)
+        kwargs = self.__inject_limit_param(kwargs)
+        response = super().session.get(target, **kwargs)
 
         if response.status_code != 200:
             raise KayakoAPIError(response)
 
-        return self._parse_response(response.json(), method='GET', target=target, params=params, **kwargs)
+        return self._parse_response(response.json(), method='GET', target=target, **kwargs)
 
     @request_error_wrapper
     def put(self, target, data={}, params={},  ** kwargs):
@@ -88,4 +95,4 @@ class KayakoRequests(KayakoSession):
         if response.status_code != 200:
             raise KayakoAPIError(response)
 
-        return self._parse_response(response.json(), method='POST', target=target, params=params, **kwargs)
+        return self._parse_response(response.json(), method='POST', target=target, **kwargs)

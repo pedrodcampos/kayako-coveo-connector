@@ -1,4 +1,4 @@
-from kayako.core.errors import KayakoError
+from kayako.api.errors import KayakoError
 
 
 class KayakoKreError(KayakoError):
