@@ -6,25 +6,6 @@ from kayako.api.objects.user_session import KayakoUserSession
 from requests.exceptions import ConnectionError, ReadTimeout, RequestException
 
 
-def request_error_wrapper(f):
-    def decorator(*args, **kwargs):
-        try:
-            return f(*args, **kwargs)
-        except ConnectionError as e:
-            if isinstance(args[0], KayakoRequests):
-                logging.warning('Session was expired. Renewing...')
-                args[0]._KayakoRequests__new_session()
-                return f(*args, **kwargs)
-        except ReadTimeout as e:
-            logging.critical('Kayko API Server read timeout.')
-            raise KayakoAPIError(e)
-        except RequestException as e:
-            raise KayakoError
-        else:
-            raise KayakoError(e)
-    return decorator
-
-
 class KayakoSession():
     __session_endpoint__ = 'session'
 

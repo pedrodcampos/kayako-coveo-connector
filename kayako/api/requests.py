@@ -6,11 +6,6 @@ from kayako.api.session import KayakoSession
 from requests.exceptions import ConnectionError, ReadTimeout, RequestException
 
 
-def extract_params(args, ignore_keys=[]):
-    ignore_keys.append('self')
-    return {key: value for key, value in args.items() if key not in ignore_keys and '__' not in key}
-
-
 def request_error_wrapper(f):
     def decorator(*args, **kwargs):
         try:

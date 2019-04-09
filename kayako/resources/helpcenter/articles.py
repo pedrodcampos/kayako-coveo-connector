@@ -1,16 +1,15 @@
-from kayako.api.endpoint import KayakoEndpoint, extract_params
-from kayako.api.requests import KayakoRequests
+from kayako.api import KayakoAPIController, extract_params
 
 
-class KayakoArticles(KayakoEndpoint):
+class KayakoArticles():
 
-    __endpoint_name__ = 'articles'
+    __resource_name__ = 'articles'
 
-    def __init__(self, requests: KayakoRequests):
-        super().__init__(requests)
+    def __init__(self, requests):
+        self.__api = KayakoAPIController(self.__resource_name__, requests)
 
     def get(self, id: int = None, section_id=None, tags: list = None,
             legacy_ids: list = None, fields=None, include=None, **kwargs):
 
         params = extract_params(locals(), 'id')
-        return super().get(id, params=params, **kwargs)
+        return self.__api.get(id, params=params, **kwargs)
